@@ -1,7 +1,7 @@
 <?php
 
 if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-	exit('PHP版本必须高于5.4');
+    exit('PHP版本必须高于5.4');
 }
 
 
