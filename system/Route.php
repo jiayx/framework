@@ -19,32 +19,60 @@ class Route
     	// print_r($uri);die;
         $routes = self::routes();
         if (array_key_exists($uri, $routes)) {
-        	self::dispatch($routes[$uri]);
+        	if (self::dispatch($routes[$uri])) {
+        		return;
+        	}
         } else {
         	foreach ($routes as $key => $route) {
-        		// echo $key, '</br>';
-        		// echo $uri, '</br>';
-	        	if (preg_match('~^' . $key . '$~', $uri, $match)) {
-	        		array_shift($match);
-		        	self::dispatch($route, $match);
+	        	if (! preg_match('~^' . $key . '$~', $uri, $match)) {
+	        		continue;
 	        	}
+                array_shift($match);
+                if (self::dispatch($route, $match)) {
+                    return;
+                }
 			}
-
         }
+        self::dispatch(self::$rules['MISSING']);
     }
 
 	// 路由分发
-	private static function dispatch($method, $params = [])
+	private static function dispatch(&$method, $params = [])
 	{
-		// echo $method;die;
 		if (is_string($method)) {
-			list($className, $methodName) = explode('::', $method);
-			// echo $className, $methodName;die;
-			return call_user_func_array([new $className, $methodName], $params);
+			if ($isCallable = self::isCallable($method)) {
+				call_user_func_array($isCallable, $params);
+                return true;
+			}
 		} elseif (is_callable($method)) {
-			return call_user_func_array($method, $params);
+			call_user_func_array($method, $params);
+            return true;
+		} else {
+            // todo 
+            return false;
+        }
+	}
+
+	// 是否可调用
+	private static function isCallable($method)
+	{
+		$method = explode('::', $method, 2);
+		if (count($method) < 2) {
+			return false;
 		}
-		return false;
+		$className = $method[0];
+		$methodName = $method[1];
+        if (! class_exists($className)) {
+            // echo 'class: ', $className , ' not found!';
+            return false;
+        }
+        $class = new $className;
+		if (! method_exists($class, $methodName)) {
+            // echo 'method: ', $methodName, ' not found!';
+			return false;
+		}
+
+		return [$class, $methodName];
 	}
 
 	private static function routes()

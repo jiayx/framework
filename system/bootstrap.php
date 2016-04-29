@@ -2,10 +2,10 @@
 
 // 修正cli模式下运行目录不同部分系统函数取值不同的问题 比如: getcwd
 defined('STDIN') AND chdir(__DIR__);
-
+define('DS', DIRECTORY_SEPARATOR);
 
 defined('APP_DEBUG') OR define('APP_DEBUG', false);
-
+defined('ENV') OR define('ENV', 'development');
 
 define('IS_CGI', (0 === strpos(PHP_SAPI, 'cgi') || false !== strpos(PHP_SAPI, 'fcgi')) ? 1 : 0);
 define('IS_WIN', strstr(PHP_OS, 'WIN') ? 1 : 0);
@@ -19,6 +19,6 @@ Loader::register();
 Loader::addAutoLoadPath(SYSTEM_PATH);
 Loader::addAutoLoadPath(APP_PATH);
 
-Loader::import(APP_PATH . 'route.php');
+Loader::import(APP_PATH . 'routes.php');
 
 Route::run();

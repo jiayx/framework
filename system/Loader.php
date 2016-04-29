@@ -7,7 +7,7 @@ class Loader
 {
 	// 自动加载搜索目录
 	private static $loadPaths = [];
-	// 这个没用
+	// 这个暂时没用
 	private static $LoadedCache = [];
 
 	// 添加自动加载路径
