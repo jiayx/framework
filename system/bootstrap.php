@@ -1,8 +1,9 @@
 <?php
 
-// 修正cli模式下运行目录不同部分系统函数取值不同的问题 比如: getcwd
-defined('STDIN') AND chdir(__DIR__);
 define('DS', DIRECTORY_SEPARATOR);
+
+define('APP_PATH', ROOT_PATH . APP_FOLDER . DS);
+define('SYSTEM_PATH', ROOT_PATH . SYSTEM_FOLDER . DS);
 
 defined('APP_DEBUG') OR define('APP_DEBUG', false);
 defined('ENV') OR define('ENV', 'development');
