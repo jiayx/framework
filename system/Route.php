@@ -15,7 +15,7 @@ class Route
 
     public static function run()
     {
-        $uri = Uri::parse();
+        $uri = Request::uri();
         // print_r($uri);die;
         $routes = self::routes();
         if (array_key_exists($uri, $routes)) {
@@ -56,7 +56,7 @@ class Route
     // 是否可调用
     private static function isCallable($method)
     {
-        $method = explode('::', $method, 2);
+        $method = explode('@', $method, 2);
         if (count($method) < 2) {
             return false;
         }
