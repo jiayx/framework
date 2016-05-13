@@ -149,7 +149,7 @@ class Container implements ArrayAccess
     {
         list($reflection, $dependencies) = $this->getDependencies($class);
         // $params 的内容补充 覆盖到依赖信息中
-        // 构造函数需要的参数从这里传入 - 传入之后 会覆盖 Instance->id 为null的参数
+        // 构造函数需要的[必填参数]可以从这里传入 - 传入之后 会覆盖 Instance->id 为null的参数
         // 为null代表这是一个没有默认值的参数(必填)如果这里没有覆盖，即必须赋值的参数没有赋值，会在 resolveDependencies 的时候报错)
         $dependencies = array_merge($dependencies, $params);
 
