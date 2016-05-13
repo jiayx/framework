@@ -20,7 +20,7 @@ class Container implements ArrayAccess
     // 注册依赖
     public function set($class, $definition = [], $params = [])
     {
-        $this['definitions'][$class] = $this->formatDefinition($class, $definition);
+        $this['definitions'][$class] = $this->normalizeDefinition($class, $definition);
         $this['params'][$class] = $params;
         // 使用set申明依赖，说明这个不需要单例
         unset($this['singletons'][$class]);
@@ -30,7 +30,7 @@ class Container implements ArrayAccess
     // 注册单例依赖
     public function setSingleton($class, $definition = [], $params = [])
     {
-        $this['definitions'][$class] = $this->formatDefinition($class, $definition);
+        $this['definitions'][$class] = $this->normalizeDefinition($class, $definition);
         $this['params'][$class] = $params;
         // 初始化单例为null
         $this['singletons'][$class] = null;
@@ -69,7 +69,7 @@ class Container implements ArrayAccess
             $config = array_merge($definition, $config);
             // 这里应该是区别是[别名定义]还是[类名定义的]
             // 别名定义的话 会走else
-            // 类名定义的话 走if - 具体参考 formatDefinition 的逻辑
+            // 类名定义的话 走if - 具体参考 normalizeDefinition 的逻辑
             if ($class === $dependClass) {
                 $object = $this->build($class, $params, $config);
             } else {
@@ -174,8 +174,8 @@ class Container implements ArrayAccess
         return $params + $_params;
     }
 
-    // 格式化依赖定义数组
-    protected function formatDefinition($class, $definition = [])
+    // 标准化依赖定义数组
+    protected function normalizeDefinition($class, $definition = [])
     {
         if (empty($definition)) {
             return ['class' => $class];
@@ -185,11 +185,11 @@ class Container implements ArrayAccess
             return $definition;
         } elseif (is_array($definition)) {
             if (! isset($definition['class'])) {
-                throw new InvalidConfigException('类的定义必须包含键名为 “class” 的元素');
+                throw new InvalidConfigException('依赖定义数组中必须包含键名为 “class” 的元素');
             }
             return $definition;
         } else {
-            throw new InvalidConfigException('类的定义必须包含键名为 “class” 的元素');
+            throw new InvalidConfigException('依赖定义格式有误');
         }
     }
 }
